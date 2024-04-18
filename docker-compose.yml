@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  pastebinwebapi:
+    image: ${DOCKER_REGISTRY-}pastebinwebapi
+    build:
+      context: .
+      dockerfile: PastebinWebAPI/Dockerfile

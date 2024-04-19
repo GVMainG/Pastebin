@@ -1,8 +1,19 @@
 version: '3.4'
 
 services:
+  db-pastebin-api:
+    image: postgres
+    restart: always
+    ports: 
+      - 8080:80
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: pastebinDb
+      
   pastebinwebapi:
     image: ${DOCKER_REGISTRY-}pastebinwebapi
     build:
       context: .
       dockerfile: PastebinWebAPI/Dockerfile
+  

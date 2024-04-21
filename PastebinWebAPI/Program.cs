@@ -1,6 +1,10 @@
+using PastebinWebAPI.Services;
+using PastebinWebAPI.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+AddService();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -23,3 +27,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+void AddService()
+{
+    builder.Services.AddTransient<PostService>();
+}

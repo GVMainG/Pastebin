@@ -3,9 +3,10 @@ version: '3.4'
 services:
   db-pastebin-api:
     image: postgres
+    container_name: db-pastebin-api
     restart: always
     ports: 
-      - 8080:80
+      - 5444:5432
     environment:
       POSTGRES_PASSWORD: admin
       POSTGRES_USER: admin

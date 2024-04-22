@@ -11,16 +11,16 @@ namespace PastebinWebAPI.Controllers
     public class PastebinDbAPIController : Controller
     {
         [HttpPost(Name = "AddPost")]
-        public IActionResult Add([FromServices] PostService postService, string text)
+        public void Add([FromServices] PostService postService, string text)
         {
             try
             {
-                postService.Add(new Post() { Text = text });
-                return View("Ok!");
+                postService.Add(new Post() { Text = text });     
+                
             }
             catch (Exception ex)
             {
-                return View("Error");
+                throw new Exception(ex.Message);
             }
         }
 

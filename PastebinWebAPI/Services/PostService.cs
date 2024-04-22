@@ -33,6 +33,23 @@ namespace PastebinWebAPI.Services
         public void Add(Post post)
         {
             db.Posts.Create(post);
+            Save();
+        }
+
+        public void Save()
+        {
+            try
+            {
+                db.Save();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                Dispose();
+            }
         }
     }
 }

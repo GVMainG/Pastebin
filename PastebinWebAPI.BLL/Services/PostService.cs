@@ -1,23 +1,23 @@
-﻿using PastebinWebAPI.DAL;
+﻿using PastebinWebAPI.BLL.Services.Interfaces;
+using PastebinWebAPI.DAL;
 using PastebinWebAPI.DAL.Models;
-using PastebinWebAPI.Services.Interfaces;
 
 
 
-namespace PastebinWebAPI.Services
+namespace PastebinWebAPI.BLL.Services
 {
     public class PostService : IPostService
     {
-        private IUnitOfWork db { get; set; }
+        private UnitOfWorkBase db { get; set; }
 
         //public PostService(IUnitOfWork uow)
         //{
         //    db = uow;
         //}
 
-        public PostService()
+        public PostService(string connectionString)
         {
-            db = new EFUnitOfWork();
+            db = new EFUnitOfWork(connectionString);
         }
 
         public IEnumerable<Post> Get(Func<Post, bool> func)
@@ -38,18 +38,7 @@ namespace PastebinWebAPI.Services
 
         public void Save()
         {
-            try
-            {
-                db.Save();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            finally
-            {
-                Dispose();
-            }
+            db.Save();
         }
     }
 }

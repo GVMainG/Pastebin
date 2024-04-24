@@ -1,9 +1,9 @@
 version: '3.4'
 
 services:
-  db-pastebin-api:
+  db-pastebin-postgres:
     image: postgres
-    container_name: db-pastebin-api
+    container_name: db-pastebin-postgres
     restart: always
     ports: 
       - 5432:5432

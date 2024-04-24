@@ -2,7 +2,7 @@
 
 
 
-namespace PastebinWebAPI.Services.Interfaces
+namespace PastebinWebAPI.BLL.Services.Interfaces
 {
     public interface IPostService
     {

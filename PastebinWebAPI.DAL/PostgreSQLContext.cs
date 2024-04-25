@@ -13,7 +13,6 @@ namespace PastebinWebAPI.DAL
 
         public PostgreSQLContext(string connectionString)
         {
-            // "Host=db-pastebin-api;Port=5432;Username=admin;Password=admin;Database=pastebinDb;"
             this.connectionString = connectionString;
             Database.EnsureCreated();
         }

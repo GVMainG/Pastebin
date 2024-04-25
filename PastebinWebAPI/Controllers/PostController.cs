@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PastebinWebAPI.BLL.Services.Interfaces;
 using PastebinWebAPI.DAL;
 using PastebinWebAPI.DAL.Models;
 
@@ -8,12 +9,19 @@ namespace PastebinWebAPI.Controllers
     [Route("[controller]")]
     public class PostController : Controller
     {
+        private readonly IPostService postService;
+
+        public PostController(IPostService postService)
+        {
+            this.postService = postService;
+        }
+
         [HttpPost(Name = "AddPost")]
-        public void Add([FromServices] UnitOfWorkBase postService, string text)
+        public void Add(string text)
         {
             try
             {
-                postService.Posts.Create(new Post() { Text = text });
+                postService.Add(new Post() { Text = text });
             }
             catch (Exception ex)
             {

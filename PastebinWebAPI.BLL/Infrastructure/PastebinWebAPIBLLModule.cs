@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PastebinWebAPI.BLL.Services;
+using PastebinWebAPI.BLL.Services.Interfaces;
 using PastebinWebAPI.DAL;
 
 
@@ -11,11 +13,15 @@ namespace PastebinWebAPI.BLL.Infrastructure
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c =>
-            {
-                var config = c.Resolve<IConfiguration>();
-                return new EFUnitOfWork(config.GetSection("ConnectionStrings:db-pastebin-postgres:ConnectionString").Value);
-            }).AsSelf().InstancePerLifetimeScope(); ;
+            // Регистрация DbContext
+            builder.Register(c => new PostgreSQLContext(
+                    c.Resolve<IConfiguration>().GetConnectionString("db-pastebin-postgres")))
+                .InstancePerLifetimeScope();
+
+            // Регистрация сервиса
+            builder.RegisterType<PostService>()
+                .As<IPostService>()
+                .InstancePerLifetimeScope();
         }
     }
 }

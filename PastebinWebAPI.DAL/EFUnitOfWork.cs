@@ -6,18 +6,14 @@ using PastebinWebAPI.DAL.Repositories.PostgreSQL;
 
 namespace PastebinWebAPI.DAL
 {
-    public class EFUnitOfWork : UnitOfWorkBase
+    public class EFUnitOfWork(PostgreSQLContext db) : IUnitOfWork
     {
-        private readonly PostgreSQLContext _context;
+        private bool disposed;
+        private readonly PostgreSQLContext _context = db;
 
         private PostRepositoryPostgreSQL postRepository;
 
-        public EFUnitOfWork(string connectionString)
-        {
-            _context = new PostgreSQLContext(connectionString);
-        }
-
-        public RepositoryBase<Post> Posts
+        public IRepository<Post> Posts
         {
             get
             {
@@ -27,12 +23,13 @@ namespace PastebinWebAPI.DAL
                 return postRepository;
             }
         }
-        public override void Save()
+
+        public void Save()
         {
             _context.SaveChanges();
         }
 
-        public override void Dispose(bool disposing)
+        public void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
@@ -44,7 +41,7 @@ namespace PastebinWebAPI.DAL
             }
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

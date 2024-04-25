@@ -5,7 +5,7 @@ using PastebinWebAPI.DAL.Models;
 
 namespace PastebinWebAPI.DAL.Repositories.PostgreSQL
 {
-    internal class PostRepositoryPostgreSQL : RepositoryBase<Post>
+    internal class PostRepositoryPostgreSQL : IRepository<Post>
     {
         private readonly PostgreSQLContext db;
 
@@ -14,12 +14,12 @@ namespace PastebinWebAPI.DAL.Repositories.PostgreSQL
             this.db = db;
         }
 
-        public override void Create(Post item)
+        public void Create(Post item)
         {
             db.Posts.Add(item);
         }
 
-        public override void Delete(Guid id)
+        public void Delete(Guid id)
         {
             Post book = db.Posts.Find(id);
 
@@ -27,17 +27,17 @@ namespace PastebinWebAPI.DAL.Repositories.PostgreSQL
                 db.Posts.Remove(book);
         }
 
-        public override Post Get(Guid id)
+        public Post Get(Guid id)
         {
             return db.Posts.Find(id);
         }
 
-        public override IEnumerable<Post> Get(Func<Post, bool> predicate)
+        public IEnumerable<Post> Get(Func<Post, bool> predicate)
         {
             return db.Posts.Where(predicate);
         }
 
-        public override void Update(Post item)
+        public void Update(Post item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

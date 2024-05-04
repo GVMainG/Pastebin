@@ -6,6 +6,10 @@ using PastebinWebAPI.DAL.Models;
 
 namespace PastebinWebAPI.BLL.Services
 {
+    /// <summary>
+    /// Сервиса по работе с постами.
+    /// </summary>
+    /// <param name="db"></param>
     public class PostService(PostgreSQLContext db) : IPostService
     {
         private IUnitOfWork db { get; set; } = new EFUnitOfWork(db);
@@ -15,13 +19,13 @@ namespace PastebinWebAPI.BLL.Services
             return db.Posts.Get(func);
         }
 
-        public void Add(Post post)
+        public void Create(Post post)
         {
             db.Posts.Create(post);
             Save();
         }
 
-        public void Save()
+        private void Save()
         {
             db.Save();
         }

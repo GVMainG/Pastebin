@@ -1,32 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PastebinWebAPI.BLL.Services.Interfaces;
-using PastebinWebAPI.DAL;
 using PastebinWebAPI.DAL.Models;
+
+
 
 namespace PastebinWebAPI.Controllers
 {
+    /// <summary>
+    /// КОнтролер по работе с постами.
+    /// </summary>
+    /// <param name="postService"></param>
     [ApiController]
     [Route("[controller]")]
-    public class PostController : Controller
+    public class PostController(IPostService postService) : Controller
     {
-        private readonly IPostService postService;
+        private readonly IPostService postService = postService;
 
-        public PostController(IPostService postService)
+        /// <summary>
+        /// Создание поста.
+        /// </summary>
+        /// <param name="text">Текст поста.</param>
+        [HttpPost(Name = "CreatePost")]
+        public void Create(string text)
         {
-            this.postService = postService;
-        }
-
-        [HttpPost(Name = "AddPost")]
-        public void Add(string text)
-        {
-            try
-            {
-                postService.Add(new Post() { Text = text });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            postService.Create(new Post());
         }
     }
 }

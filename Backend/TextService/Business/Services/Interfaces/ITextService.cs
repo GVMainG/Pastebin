@@ -1,7 +1,7 @@
-﻿using TextService.Data.Models;
-using TextService.Models;
+﻿using TextService.Business.Models;
+using TextService.Data.Models;
 
-namespace TextService.Services.Interfaces
+namespace TextService.Business.Services.Interfaces
 {
     public interface ITextService
     {

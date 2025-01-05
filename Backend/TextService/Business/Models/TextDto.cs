@@ -1,4 +1,4 @@
-﻿namespace TextService.Models
+﻿namespace TextService.Business.Models
 {
     public class TextDto
     {

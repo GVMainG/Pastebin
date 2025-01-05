@@ -1,9 +1,9 @@
-﻿using TextService.Data.Models;
-using TextService.Models;
-using TextService.Repositorys.Interfaces;
-using TextService.Services.Interfaces;
+﻿using TextService.Business.Models;
+using TextService.Business.Services.Interfaces;
+using TextService.Data.Models;
+using TextService.Data.Repositorys.Interfaces;
 
-namespace TextService.Services
+namespace TextService.Business.Services
 {
     /// <summary>
     /// Сервис по работе с текстовыми блокмаи.

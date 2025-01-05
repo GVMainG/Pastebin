@@ -1,6 +1,6 @@
 ﻿using TextService.Data.Models;
 
-namespace TextService.Repositorys.Interfaces
+namespace TextService.Data.Repositorys.Interfaces
 {
     public interface ITextRepository
     {

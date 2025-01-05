@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TextService.Models;
-using TextService.Services.Interfaces;
+using TextService.Business.Models;
+using TextService.Business.Services.Interfaces;
 
 namespace TextService.Controllers
 {

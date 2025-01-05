@@ -1,6 +1,0 @@
-@TextService_HostAddress = http://localhost:5288
-
-GET {{TextService_HostAddress}}/api/texts/
-Accept: application/json
-
-###

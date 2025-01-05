@@ -1,10 +1,9 @@
 ﻿using MongoDB.Driver;
 using TextService.Data;
 using TextService.Data.Models;
-using TextService.Repositorys.Interfaces;
+using TextService.Data.Repositorys.Interfaces;
 
-
-namespace TextService.Repositorys
+namespace TextService.Data.Repositorys
 {
     public class TextRepository : ITextRepository
     {

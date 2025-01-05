@@ -1,5 +1,4 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
 
 namespace TextService.Data.Models
 {
@@ -8,7 +7,7 @@ namespace TextService.Data.Models
         [BsonId]
         public string Id { get; set; }
         public string Content { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime OnCreation { get; set; }
         public DateTime ExpirationDate { get; set; }
     }
 }

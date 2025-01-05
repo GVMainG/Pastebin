@@ -5,7 +5,7 @@ namespace ApiGateway
 {
     public class Program
     {
-        public async static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,7 @@ namespace ApiGateway
 
             var app = builder.Build();
 
-            await app.UseOcelot();
+            app.UseOcelot().Wait();
 
             app.Run();
         }

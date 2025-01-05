@@ -1,27 +1,45 @@
+version: '3.8'
+
 services:
-  textservice:
-    image: ${DOCKER_REGISTRY-}textservice
+  apigateway:
+    image: ${DOCKER_REGISTRY-}apigateway
     build:
       context: .
-      dockerfile: Backend/TextService/Dockerfile
-
-  textservicemgdb:
-    image: mongo:6
-    container_name: textservice-mgdb
+      dockerfile: Backend/ApiGateway/Dockerfile
     ports:
-       - "27017:27017"
+      - "5000:80"
+    depends_on:
+      - hashservice
+      - postservice
 
-  textserviceredis:
-    image: redis:7
-    container_name: textservice-redis
+  hashservice:
+    image: ${DOCKER_REGISTRY-}hashservice
+    build:
+      context: .
+      dockerfile: Backend/HashService/Dockerfile
     ports:
-       - "6379:6379"
+      - "5001:80"
+    depends_on:
+      - redis
 
-  rabbitmq:
-    image: rabbitmq:3-management
+  postservice:
+    image: ${DOCKER_REGISTRY-}postservice
+    build:
+      context: .
+      dockerfile: Backend/PostService/Dockerfile
     ports:
-       - "5672:5672"
-       - "15672:15672"
-    environment:
-       RABBITMQ_DEFAULT_USER: guest
-       RABBITMQ_DEFAULT_PASS: guest
+      - "5003:80"
+    depends_on:
+      - mongodb
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"

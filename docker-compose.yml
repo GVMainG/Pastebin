@@ -1,0 +1,27 @@
+services:
+  textservice:
+    image: ${DOCKER_REGISTRY-}textservice
+    build:
+      context: .
+      dockerfile: Backend/TextService/Dockerfile
+
+  textservicemgdb:
+    image: mongo:6
+    container_name: textservice-mgdb
+    ports:
+       - "27017:27017"
+
+  textserviceredis:
+    image: redis:7
+    container_name: textservice-redis
+    ports:
+       - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+       - "5672:5672"
+       - "15672:15672"
+    environment:
+       RABBITMQ_DEFAULT_USER: guest
+       RABBITMQ_DEFAULT_PASS: guest

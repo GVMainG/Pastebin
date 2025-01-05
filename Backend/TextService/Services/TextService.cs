@@ -1,6 +1,6 @@
-﻿using MassTransit;
-using MongoDB.Driver;
+﻿using TextService.Data.Models;
 using TextService.Models;
+using TextService.Repositorys.Interfaces;
 using TextService.Services.Interfaces;
 
 namespace TextService.Services
@@ -10,77 +10,43 @@ namespace TextService.Services
     /// </summary>
     public class TextService : ITextService
     {
-        private readonly IMongoCollection<TextModel> _texts;
-        private readonly ICacheService _cacheService;
-        private readonly IBus _bus;
+        private readonly ITextRepository _textRepository;
 
-        public TextService(IMongoDatabase database, ICacheService cacheService, IBus bus)
+        public TextService(ITextRepository textRepository)
         {
-            _texts = database.GetCollection<TextModel>("texts");
-            _cacheService = cacheService;
-            _bus = bus;
+            _textRepository = textRepository;
         }
 
-        // Создание нового текста
+        // Создание текста
         public async Task<TextModel> CreateTextAsync(TextDto textDto)
         {
             var newText = new TextModel
             {
+                Id = Guid.NewGuid().ToString(),
                 Content = textDto.Content,
                 CreatedAt = DateTime.UtcNow,
-                ExpirationDate = textDto.ExpirationDate ?? DateTime.UtcNow.AddDays(7) // по умолчанию 7 дней
+                ExpirationDate = textDto.ExpirationDate ?? DateTime.UtcNow.AddDays(7)
             };
 
-            await _texts.InsertOneAsync(newText);
-
-            // Публикация события для кэширования
-            await _bus.Publish(new PopularityUpdateDto
-            {
-                TextId = newText.Id
-            });
-
-            return newText;
+            return await _textRepository.CreateTextAsync(newText);
         }
 
-        // Получение текста по идентификатору
+        // Получение текста по ID
         public async Task<TextModel> GetTextAsync(string id)
         {
-            // Сначала проверяем кэш
-            var cachedText = await _cacheService.GetCachedTextAsync(id);
-            if (!string.IsNullOrEmpty(cachedText))
-            {
-                Console.WriteLine($"[Cache Hit] Text {id} retrieved from cache.");
-                return new TextModel { Id = id, Content = cachedText };
-            }
-
-            // Если в кэше нет, извлекаем из MongoDB
-            var text = await _texts.Find(x => x.Id == id).FirstOrDefaultAsync();
-            if (text != null)
-            {
-                // Кэшируем текст, если он найден
-                await _cacheService.CacheTextAsync(text.Id, text.Content);
-            }
-
-            return text;
+            return await _textRepository.GetTextByIdAsync(id);
         }
 
         // Удаление текста
         public async Task<bool> DeleteTextAsync(string id)
         {
-            var result = await _texts.DeleteOneAsync(x => x.Id == id);
-            if (result.DeletedCount > 0)
-            {
-                Console.WriteLine($"[TextService] Text {id} deleted from MongoDB.");
-                return true;
-            }
-            return false;
+            return await _textRepository.DeleteTextAsync(id);
         }
 
-        // Получение популярных текстов
+        // Получение всех текстов
         public async Task<IEnumerable<TextModel>> GetPopularTextsAsync()
         {
-            var texts = await _cacheService.GetPopularTextsAsync();
-            return texts;
+            return await _textRepository.GetAllTextsAsync();
         }
     }
 }

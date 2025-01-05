@@ -1,4 +1,5 @@
-﻿using TextService.Models;
+﻿using TextService.Data.Models;
+using TextService.Models;
 
 namespace TextService.Services.Interfaces
 {

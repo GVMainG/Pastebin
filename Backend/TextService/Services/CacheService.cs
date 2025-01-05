@@ -1,5 +1,5 @@
 ﻿using StackExchange.Redis;
-using TextService.Models;
+using TextService.Data.Models;
 using TextService.Services.Interfaces;
 
 namespace TextService.Services

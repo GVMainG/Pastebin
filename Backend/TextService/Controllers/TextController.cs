@@ -18,9 +18,6 @@ namespace TextService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateText([FromBody] TextDto textDto)
         {
-            if (textDto.Content.Length > 10 * 1024 * 1024) // Проверка объема текста
-                return BadRequest("Text exceeds the maximum size of 10 MB.");
-
             var result = await _textService.CreateTextAsync(textDto);
             return CreatedAtAction(nameof(GetTextById), new { id = result.Id }, result);
         }

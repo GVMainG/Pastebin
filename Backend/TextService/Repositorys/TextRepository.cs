@@ -1,32 +1,44 @@
 ﻿using MongoDB.Driver;
-using TextService.Models;
+using TextService.Data;
+using TextService.Data.Models;
+using TextService.Repositorys.Interfaces;
+
 
 namespace TextService.Repositorys
 {
-    public class TextRepository /*: ITextRepository*/
+    public class TextRepository : ITextRepository
     {
         private readonly IMongoCollection<TextModel> _texts;
 
-        public TextRepository(IMongoDatabase database)
+        public TextRepository(MongoDbContext context)
         {
-            _texts = database.GetCollection<TextModel>("texts");
+            _texts = context.Texts;
         }
 
-        public async Task<TextModel> CreateAsync(TextModel text)
+        // Создание текста
+        public async Task<TextModel> CreateTextAsync(TextModel text)
         {
             await _texts.InsertOneAsync(text);
             return text;
         }
 
-        public async Task<TextModel> GetByIdAsync(string id)
+        // Получение текста по ID
+        public async Task<TextModel> GetTextByIdAsync(string id)
         {
-            return await _texts.Find(x => x.Id == id).FirstOrDefaultAsync();
+            return await _texts.Find(t => t.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        // Удаление текста
+        public async Task<bool> DeleteTextAsync(string id)
         {
-            var result = await _texts.DeleteOneAsync(x => x.Id == id);
+            var result = await _texts.DeleteOneAsync(t => t.Id == id);
             return result.DeletedCount > 0;
+        }
+
+        // Получение всех текстов
+        public async Task<IEnumerable<TextModel>> GetAllTextsAsync()
+        {
+            return await _texts.Find(_ => true).ToListAsync();
         }
     }
 }

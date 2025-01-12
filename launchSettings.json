@@ -4,9 +4,6 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "textservice": "StartDebugging",
-        "postservice": "StartDebugging",
-        "apigateway": "StartDebugging",
         "hashservice": "StartDebugging"
       }
     }

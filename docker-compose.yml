@@ -1,45 +1,38 @@
-version: '3.8'
-
 services:
-  apigateway:
-    image: ${DOCKER_REGISTRY-}apigateway
-    build:
-      context: .
-      dockerfile: Backend/ApiGateway/Dockerfile
-    ports:
-      - "5000:80"
-    depends_on:
-      - hashservice
-      - postservice
-
   hashservice:
     image: ${DOCKER_REGISTRY-}hashservice
     build:
       context: .
-      dockerfile: Backend/HashService/Dockerfile
-    ports:
-      - "5001:80"
+      dockerfile: Services/HashService/Dockerfile
+    container_name: hashservice
     depends_on:
       - redis
-
-  postservice:
-    image: ${DOCKER_REGISTRY-}postservice
-    build:
-      context: .
-      dockerfile: Backend/PostService/Dockerfile
+      - rabbitmq
     ports:
-      - "5003:80"
-    depends_on:
-      - mongodb
+      - "5000:80"
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672" # RabbitMQ Protocol
+      - "15672:15672" # Management Dashboard
+    networks:
+      - app-network
 
   redis:
-    image: redis:latest
+    image: redis:7
     container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - app-network
 
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    ports:
-      - "27017:27017"
+networks:
+  app-network: 
+    driver: bridge

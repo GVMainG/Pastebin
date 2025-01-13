@@ -19,10 +19,10 @@ namespace HashService.BL.Services
             _hashGenerator = new HashGeneratorService();
         }
 
-        public void Start()
+        public async void Start()
         {
             // Подписка на запросы на хэши
-            _rabbitMqService.RespondingToRequests<GetHashsRequest, HashModel>(HandleHashRequest);
+            await _rabbitMqService.RespondingToRequests<GetHashsRequest, HashModel>(HandleHashRequest);
         }
 
         private HashModel HandleHashRequest(GetHashsRequest message)

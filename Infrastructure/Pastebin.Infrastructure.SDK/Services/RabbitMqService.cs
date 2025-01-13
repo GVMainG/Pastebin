@@ -68,14 +68,17 @@ namespace Pastebin.Infrastructure.SDK.Services
         /// <typeparam name="TResponseMessage">Тип сообщения ответа.</typeparam>
         /// <param name="message">Сообщение запроса.</param>
         /// <param name="responseHandler">Делегат для обработки ответа.</param>
-        public async Task AsynchronousRequest<TRequestMessage, TResponseMessage>(TRequestMessage message,
+        public async Task<TResponseMessage> AsynchronousRequest<TRequestMessage, TResponseMessage>(TRequestMessage message,
             Action<TResponseMessage> responseHandler)
         {
+            TResponseMessage result = default;
             var task = _bus.Rpc.RequestAsync<TRequestMessage, TResponseMessage>(message);
             await task.ContinueWith(async response =>
             {
                 responseHandler(await response); // Обработка ответа.
+                result = await response;
             });
+            return result;
         }
 
         /// <summary>

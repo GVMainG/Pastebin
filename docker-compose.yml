@@ -9,7 +9,7 @@ services:
       - redis
       - rabbitmq
     ports:
-      - "5000:80"
+      - "5001:80"
     networks:
       - app-network
 
@@ -33,6 +33,21 @@ services:
     networks:
       - app-network
 
+  postservice:
+    image: ${DOCKER_REGISTRY-}postservice
+    build:
+      context: .
+      dockerfile: Services/PostService/Dockerfile
+    container_name: postservice
+    depends_on:
+      - rabbitmq
+    ports:
+      - "5000:80"
+    networks:
+      - app-network
+
 networks:
   app-network: 
     driver: bridge
+
+

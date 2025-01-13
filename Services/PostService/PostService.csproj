@@ -4,19 +4,23 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>6823ffdc-7181-4cb9-827a-843fb09bd38d</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\Pastebin.Infrastructure.SDK\Pastebin.Infrastructure.SDK.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

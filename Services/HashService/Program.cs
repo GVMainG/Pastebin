@@ -1,9 +1,6 @@
 using HashService.DAL;
-using HashService.DAL.Models;
 using HashService.Services;
 using Pastebin.Infrastructure.SDK.Extensions;
-using Pastebin.Infrastructure.SDK.Models;
-using Pastebin.Infrastructure.SDK.Services;
 using HS = HashService.BL.Services.RedisHashService;
 
 namespace HashService
@@ -26,11 +23,6 @@ namespace HashService
             app.Services.GetService<HS>()?.Start();
 
             app.Run();
-        }
-
-        private static void Test(HashModel request)
-        {
-            i++;
         }
     }
 }

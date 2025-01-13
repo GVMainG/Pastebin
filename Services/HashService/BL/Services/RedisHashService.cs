@@ -1,17 +1,18 @@
 ﻿using HashService.DAL;
 using HashService.DAL.Models;
 using HashService.Services;
+using Pastebin.Infrastructure.SDK.Models;
 using Pastebin.Infrastructure.SDK.Services;
 
 namespace HashService.BL.Services
 {
     public class RedisHashService
     {
-        private readonly DAL.RedisHashService _redisCache;
+        private readonly RedisHash _redisCache;
         private readonly HashGeneratorService _hashGenerator;
         private readonly RabbitMqService _rabbitMqService;
 
-        public RedisHashService(DAL.RedisHashService redisCacheService, RabbitMqService rabbitMqService)
+        public RedisHashService(RedisHash redisCacheService, RabbitMqService rabbitMqService)
         {
             _redisCache = redisCacheService;
             _rabbitMqService = rabbitMqService;
@@ -21,16 +22,16 @@ namespace HashService.BL.Services
         public void Start()
         {
             // Подписка на запросы на хэши
-            _rabbitMqService.SubscribeAsync<string>("hash_request", HandleHashRequest).Wait();
+            _rabbitMqService.RespondingToRequests<GetHashsRequest, HashModel>(HandleHashRequest);
         }
 
-        private void HandleHashRequest(string message)
+        private HashModel HandleHashRequest(GetHashsRequest message)
         {
             var hash = _redisCache.GetHash() ?? _hashGenerator.GenerateHash();
             _redisCache.SaveHash(hash); // Пополнение Redis, если необходимо
 
             // Публикуем сгенерированный хэш
-            _rabbitMqService.PublishMessage(new HashModel { Hash = hash }).Wait();
+            return new HashModel() { Hash = hash };
         }
     }
 }

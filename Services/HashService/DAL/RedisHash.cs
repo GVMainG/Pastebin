@@ -3,11 +3,11 @@ using StackExchange.Redis;
 
 namespace HashService.DAL
 {
-    public class RedisHashService
+    public class RedisHash
     {
         private readonly IDatabase _redisDb;
 
-        public RedisHashService(string connectionString)
+        public RedisHash(string connectionString)
         {
             var redis = ConnectionMultiplexer.Connect(connectionString);
             _redisDb = redis.GetDatabase();

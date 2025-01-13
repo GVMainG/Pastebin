@@ -85,7 +85,7 @@ namespace Pastebin.Infrastructure.SDK.Services
         /// <typeparam name="TResponseMessage">Тип ответа.</typeparam>
         /// <param name="message">Сообщение ответа.</param>
         /// <param name="requestHandler">Функция для обработки запросов.</param>
-        public async Task RespondingToRequests<TRequestMessage, TResponseMessage>(TResponseMessage message,
+        public async Task RespondingToRequests<TRequestMessage, TResponseMessage>(
             Func<TRequestMessage, TResponseMessage> requestHandler)
         {
             await _bus.Rpc.RespondAsync<TRequestMessage, TResponseMessage>(request => requestHandler(request));

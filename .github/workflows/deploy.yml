@@ -1,0 +1,28 @@
+name: CI/CD Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🔑 Set up SSH Access
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.PASTEBIN_KEY }}
+
+      - name: 🚀 Deploy to Ubuntu Server
+        run: |
+          ssh -o StrictHostKeyChecking=no your_username@147.45.154.63 << 'EOF'
+            cd ~/Pastebin
+            git pull origin main
+            sudo docker compose down
+            sudo docker compose up -d --build
+          EOF

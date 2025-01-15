@@ -39,13 +39,6 @@ namespace PostService
             app.UseAuthorization();
             app.MapControllers();
 
-            // Проверка и создание базы данных
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var dbContext = scope.ServiceProvider.GetRequiredService<PostgreSQLContext>();
-            //    dbContext.Database.Migrate();
-            //}
-
             app.Run();
         }
     }

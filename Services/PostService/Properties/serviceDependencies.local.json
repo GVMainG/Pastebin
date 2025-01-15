@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "mongodb1": {
+      "ignored": "true",
+      "type": "mongodb"
+    },
+    "postgresql1": {
+      "ignored": "true",
+      "type": "postgresql"
+    }
+  }
+}

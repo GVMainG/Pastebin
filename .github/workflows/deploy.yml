@@ -20,7 +20,7 @@ jobs:
 
       - name: 🚀 Deploy to Ubuntu Server
         run: |
-          ssh -o StrictHostKeyChecking=no your_username@147.45.154.63 << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@147.45.154.63 << 'EOF'
             cd ~/Pastebin
             git pull origin main
             sudo docker compose down

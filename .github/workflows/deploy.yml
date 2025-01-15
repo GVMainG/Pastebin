@@ -19,11 +19,11 @@ jobs:
           ssh-private-key: ${{ secrets.PASTEBIN_KEY }}
 
       - name: 🔍 Test SSH Connection
-        run: ssh -v -o StrictHostKeyChecking=no your_username@147.45.154.63 "echo Connected"
+        run: ssh -v -o StrictHostKeyChecking=no ssh root@147.45.154.63 "echo Connected"
 
       - name: 🚀 Deploy to Ubuntu Server
         run: |
-          ssh -o StrictHostKeyChecking=no your_username@147.45.154.63 << 'EOF'
+          ssh -o StrictHostKeyChecking=no ssh root@147.45.154.63 << 'EOF'
             cd ~/Pastebin
             git pull origin main
             sudo docker compose down

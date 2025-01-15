@@ -4,7 +4,6 @@ using Pastebin.Infrastructure.SDK.Services;
 
 namespace Pastebin.Infrastructure.SDK.Extensions
 {
-    // Тест
     public static class ServiceCollectionExtensions
     {
         /// <summary>

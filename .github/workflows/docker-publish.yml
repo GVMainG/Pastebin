@@ -1,0 +1,77 @@
+name: Docker CI/CD Deploy
+
+on:
+  schedule:
+    - cron: '23 13 * * *'  # Автоматический запуск каждый день в 13:23 UTC
+  push:
+    branches: [ "main" ]    # Автоматический запуск при пуше в ветку main
+    tags: [ 'v*.*.*' ]      # Запуск при создании тега версии
+  pull_request:
+    branches: [ "main" ]    # Проверка при pull request в ветку main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: 🛎 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔑 Set up SSH Access
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.PASTEBIN_KEY }}
+
+      - name: 🔍 Test SSH Connection
+        run: ssh -o StrictHostKeyChecking=no root@147.45.154.63 "echo Connected to server"
+
+      - name: 🏗 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Log into Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📦 Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: 🏗 Build and Push Docker Image
+        id: build-and-push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 🚀 Deploy to Ubuntu Server
+        run: |
+          ssh -o StrictHostKeyChecking=no root@147.45.154.63 << 'EOF'
+            cd ~/Pastebin
+            git pull origin main
+            sudo docker compose down
+            sudo docker compose pull
+            sudo docker compose up -d --build
+          EOF
+
+      - name: 📝 Cleanup Docker
+        run: |
+          ssh -o StrictHostKeyChecking=no root@147.45.154.63 << 'EOF'
+            sudo docker system prune -af
+          EOF

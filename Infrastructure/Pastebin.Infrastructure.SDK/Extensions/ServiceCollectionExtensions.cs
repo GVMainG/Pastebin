@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Pastebin.Infrastructure.SDK.Services;
 
 namespace Pastebin.Infrastructure.SDK.Extensions
-{
+{ //
     public static class ServiceCollectionExtensions
     {
         /// <summary>

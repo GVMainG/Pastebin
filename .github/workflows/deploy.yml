@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: heckout Repository
         uses: actions/checkout@v3
 
       - name: Set up SSH Access
@@ -18,14 +19,19 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PASTEBIN_KEY }}
 
+      - name: Add GitHub to known_hosts
+        run: ssh-keyscan github.com >> ~/.ssh/known_hosts
+
       - name: Deploy to Ubuntu Server
         run: |
           ssh -o StrictHostKeyChecking=no user_gdvoronko@147.45.154.63 << 'EOF'
             if [ ! -d "~/Pastebin/.git" ]; then
               git clone git@github.com:GVMainG/Pastebin.git ~/Pastebin
             fi
+
             cd ~/Pastebin
             git pull origin master
+
             docker compose down
             docker compose up -d --build
           EOF

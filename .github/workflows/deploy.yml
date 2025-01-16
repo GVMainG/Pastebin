@@ -3,27 +3,27 @@ name: CI/CD Deploy
 on:
   push:
     branches:
-      - main
+      - main  # Срабатывает при пуше в ветку main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🛎 Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🔑 Set up SSH Access
+      - name: Set up SSH Access
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.PASTEBIN_KEY }}
 
-      - name: 🔍 Test SSH Connection
-        run: ssh -v -o StrictHostKeyChecking=no ssh root@147.45.154.63 "echo Connected"
+      - name: Test SSH Connection
+        run: ssh -o StrictHostKeyChecking=no user_gdvoronko@147.45.154.63 "echo Connected to server"
 
-      - name: 🚀 Deploy to Ubuntu Server
+      - name: Deploy to Ubuntu Server
         run: |
-          ssh -o StrictHostKeyChecking=no ssh root@147.45.154.63 << 'EOF'
+          ssh -o StrictHostKeyChecking=no user_gdvoronko@147.45.154.63 << 'EOF'
             cd ~/Pastebin
             git pull origin main
             sudo docker compose down

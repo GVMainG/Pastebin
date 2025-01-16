@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Проверка запуска Workflow
+        run: echo "Workflow сработал!"
+
       - name: Checkout Repository
         uses: actions/checkout@v3
 

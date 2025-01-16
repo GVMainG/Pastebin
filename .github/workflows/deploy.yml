@@ -4,34 +4,39 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: heckout Repository
+      - name: 🛎 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH Access
+      - name: 🔑 Set up SSH Access
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.PASTEBIN_KEY }}
 
-      - name: Add GitHub to known_hosts
+      - name: ✅ Add GitHub to known_hosts
         run: ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Deploy to Ubuntu Server
+      - name: 🚀 Deploy to Ubuntu Server
         run: |
           ssh -o StrictHostKeyChecking=no user_gdvoronko@147.45.154.63 << 'EOF'
-            if [ ! -d "~/Pastebin/.git" ]; then
-              git clone git@github.com:GVMainG/Pastebin.git ~/Pastebin
+            # Добавляем GitHub в доверенные узлы
+            ssh-keyscan github.com >> /home/user_gdvoronko/.ssh/known_hosts
+
+            # Проверка существования репозитория
+            if [ ! -d "/home/user_gdvoronko/Pastebin/.git" ]; then
+              git clone git@github.com:GVMainG/Pastebin.git /home/user_gdvoronko/Pastebin
             fi
 
-            cd ~/Pastebin
+            # Переход в проект и обновление
+            cd /home/user_gdvoronko/Pastebin
             git pull origin master
 
+            # Перезапуск Docker-контейнеров
             docker compose down
             docker compose up -d --build
           EOF

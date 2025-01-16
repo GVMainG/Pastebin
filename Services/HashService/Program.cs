@@ -14,7 +14,7 @@ namespace HashService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddTransient(x => {return new RedisHash("192.168.1.10:6379"); });
+            builder.Services.AddTransient(x => {return new RedisHash(builder.Configuration.GetConnectionString("redis")); });
             builder.Services.AddSingleton(new RabbitMqService(builder.Configuration.GetConnectionString("rabbitmq")));
             builder.Services.AddSingleton<HS>();
 

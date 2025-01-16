@@ -3,16 +3,13 @@ name: CI/CD Deploy
 on:
   push:
     branches:
-      - master  # Срабатывает при пуше в ветку main
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Проверка запуска Workflow
-        run: echo "Workflow сработал!"
-
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -21,14 +18,14 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PASTEBIN_KEY }}
 
-      - name: Test SSH Connection
-        run: ssh -o StrictHostKeyChecking=no user_gdvoronko@147.45.154.63 "echo Connected to server"
-
       - name: Deploy to Ubuntu Server
         run: |
           ssh -o StrictHostKeyChecking=no user_gdvoronko@147.45.154.63 << 'EOF'
+            if [ ! -d "~/Pastebin/.git" ]; then
+              git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git ~/Pastebin
+            fi
             cd ~/Pastebin
-            git pull origin master
-            sudo docker compose down
-            sudo docker compose up -d --build
+            git pull origin main
+            sudo -S docker compose down <<< "${{ secrets.SERVER_PASSWORD }}"
+            sudo -S docker compose up -d --build <<< "${{ secrets.SERVER_PASSWORD }}"
           EOF

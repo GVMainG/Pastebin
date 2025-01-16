@@ -3,7 +3,7 @@ name: CI/CD Deploy
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
@@ -22,10 +22,10 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no user_gdvoronko@147.45.154.63 << 'EOF'
             if [ ! -d "~/Pastebin/.git" ]; then
-              git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git ~/Pastebin
+              git clone git@github.com:GVMainG/Pastebin.git ~/Pastebin
             fi
             cd ~/Pastebin
-            git pull origin master
-            sudo -S docker compose down <<< "${{ secrets.SERVER_PASSWORD }}"
-            sudo -S docker compose up -d --build <<< "${{ secrets.SERVER_PASSWORD }}"
+            git pull origin main
+            docker compose down
+            docker compose up -d --build
           EOF

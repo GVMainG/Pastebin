@@ -7,12 +7,10 @@ namespace PostService.DAL
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbContext(IConfiguration conf)
+        public MongoDbContext(string connectionString)
         {
-            var section = conf.GetSection("MongoDbSettings");
-
-            var client = new MongoClient(section["ConnectionString"]);
-            _database = client.GetDatabase(section["Database"]);
+            var client = new MongoClient(connectionString);
+            _database = client.GetDatabase("PostServiceDb");
         }
 
         public IMongoCollection<PostTextModel> Posts => _database.GetCollection<PostTextModel>("Posts");

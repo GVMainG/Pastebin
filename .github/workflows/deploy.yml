@@ -28,7 +28,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no user_gdvoronko@147.45.154.63 << 'EOF'
             cd ~/Pastebin
-            git pull origin main
+            git pull origin master
             sudo docker compose down
             sudo docker compose up -d --build
           EOF

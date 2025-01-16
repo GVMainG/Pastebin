@@ -11,8 +11,9 @@ services:
     ports:
       - "8082:8082"
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: "http://0.0.0.0:8082"
+      ConnectionStrings__rabbitmq: "host=rabbitmq:5672;username=guest;password=guest;publisherConfirms=true"
+      ConnectionStrings__redis: "redis:6379"
     restart: always
     networks:
       - app-network
@@ -25,7 +26,7 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     ports:
       - "5672:5672" # RabbitMQ Protocol
-      - "15672:15672" # Management Dashboard
+      - "15672:15672" # UI
     networks:
       - app-network
 
@@ -48,7 +49,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__postgres: "Host=postgres;Port=5432;Database=postservice_db;Username=postgres;Password=postgres"
+      ConnectionStrings__mongodb: "mongodb://mongo:27017"
+      ConnectionStrings__rabbitmq: "host=rabbitmq:5672;username=guest;password=guest;publisherConfirms=true"
       ASPNETCORE_URLS: "http://0.0.0.0:8080"
     restart: always
     networks:
@@ -66,6 +69,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+    - app-network
 
   mongo:
     image: mongo:6
@@ -75,6 +80,8 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+    - app-network
 
 volumes:
   postgres_data:
@@ -83,5 +90,3 @@ volumes:
 networks:
   app-network: 
     driver: bridge
-
-

@@ -17,14 +17,32 @@ namespace PostService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // ����������� RabbitMQ
-            builder.Services.AddSingleton(new RabbitMqService(builder.Configuration.GetConnectionString("rabbitmq")));
+            // Подключение RabbitMQ
+            var rabbitMqConnectionString = builder.Configuration.GetConnectionString("rabbitmq");
+            if (string.IsNullOrEmpty(rabbitMqConnectionString))
+            {
+                throw new InvalidOperationException("RabbitMQ connection string is not configured.");
+            }
+            builder.Services.AddSingleton(new RabbitMqService(rabbitMqConnectionString));
 
+            // Подключение PostgreSQL
+            var postgresConnectionString = builder.Configuration.GetConnectionString("postgres");
+            if (string.IsNullOrEmpty(postgresConnectionString))
+            {
+                throw new InvalidOperationException("PostgreSQL connection string is not configured.");
+            }
             builder.Services.AddDbContext<PostgreSQLContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
-            // ����������� MongoDB
-            builder.Services.AddSingleton(new MongoDbContext(builder.Configuration.GetConnectionString("mongodb")));
+                options.UseNpgsql(postgresConnectionString));
 
+            // Подключение MongoDB
+            var mongoConnectionString = builder.Configuration.GetConnectionString("mongodb");
+            if (string.IsNullOrEmpty(mongoConnectionString))
+            {
+                throw new InvalidOperationException("MongoDB connection string is not configured.");
+            }
+            builder.Services.AddSingleton(new MongoDbContext(mongoConnectionString));
+
+            // Регистрация репозиториев
             builder.Services.AddScoped<PostsPostgreSQLRepository>();
             builder.Services.AddScoped<PostsMongoDbRepository>();
 

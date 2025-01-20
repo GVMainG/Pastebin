@@ -14,6 +14,7 @@ namespace PostService.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Настройка ключа для модели PostMetadataModel.
             modelBuilder.Entity<PostMetadataModel>().HasKey(p => p.Hash);
             base.OnModelCreating(modelBuilder);
         }

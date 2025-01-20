@@ -20,7 +20,7 @@ namespace Pastebin.Infrastructure.SDK.Services
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentException("Строка подключения не может быть пустой.", nameof(connectionString));
 
-            _bus = RabbitHutch.CreateBus(connectionString); // Инициализация подключения к RabbitMQ.
+            _bus = RabbitHutch.CreateBus(connectionString);
         }
 
         /// <summary>
@@ -28,9 +28,12 @@ namespace Pastebin.Infrastructure.SDK.Services
         /// </summary>
         /// <typeparam name="TMessage">Тип сообщения.</typeparam>
         /// <param name="message">Сообщение для публикации.</param>
-        public async Task PublishMessage<TMessage>(TMessage message)
+        public async Task PublishMessageAsync<TMessage>(TMessage message)
         {
-            await _bus.PubSub.PublishAsync(message); // Асинхронная публикация сообщения.
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
+
+            await _bus.PubSub.PublishAsync(message);
         }
 
         /// <summary>
@@ -42,23 +45,24 @@ namespace Pastebin.Infrastructure.SDK.Services
         /// <exception cref="EasyNetQException">Выбрасывается, если задача не была выполнена.</exception>
         public async Task SubscribeAsync<TMessage>(string name, Action<TMessage> messageHandler)
         {
-            await _bus.PubSub.SubscribeAsync<TMessage>(name,
-            message => Task.Factory.StartNew(() =>
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Имя подписки не может быть пустым.", nameof(name));
+
+            if (messageHandler == null)
+                throw new ArgumentNullException(nameof(messageHandler));
+
+            await _bus.PubSub.SubscribeAsync<TMessage>(name, async message =>
             {
-                messageHandler(message); // Обработка сообщения.
-            }).ContinueWith(task =>
-            {
-                if (task.IsCompleted && !task.IsFaulted)
+                try
                 {
-                    // TODO: Добавить обработчик выполненных задач.
+                    await Task.Run(() => messageHandler(message));
                 }
-                else
+                catch (Exception ex)
                 {
-                    // TODO: Добавить логирование или обработчик ошибок, если задача не выполнена.
-                    throw new EasyNetQException("Message processing exception - " +
-                        "look in the default error queue (broker)");
+                    Console.WriteLine($"Error processing message: {ex.Message}");
+                    throw new EasyNetQException("Message processing exception - look in the default error queue (broker)");
                 }
-            }));
+            });
         }
 
         /// <summary>
@@ -68,21 +72,16 @@ namespace Pastebin.Infrastructure.SDK.Services
         /// <typeparam name="TResponseMessage">Тип сообщения ответа.</typeparam>
         /// <param name="message">Сообщение запроса.</param>
         /// <param name="responseHandler">Делегат для обработки ответа.</param>
-        public async Task<TResponseMessage> AsynchronousRequest<TRequestMessage, TResponseMessage>(TRequestMessage message,
+        public async Task<TResponseMessage> AsynchronousRequestAsync<TRequestMessage, TResponseMessage>(TRequestMessage message,
             Action<TResponseMessage> responseHandler = null)
         {
-            TResponseMessage result = default;
-            var task = _bus.Rpc.RequestAsync<TRequestMessage, TResponseMessage>(message);
-            await task.ContinueWith(async response =>
-            {
-                if (responseHandler is not null)
-                {
-                    responseHandler(await response);
-                }
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
 
-                result = await response;
-            });
-            return result;
+            var response = await _bus.Rpc.RequestAsync<TRequestMessage, TResponseMessage>(message);
+            responseHandler?.Invoke(response);
+
+            return response;
         }
 
         /// <summary>
@@ -90,17 +89,18 @@ namespace Pastebin.Infrastructure.SDK.Services
         /// </summary>
         /// <typeparam name="TRequestMessage">Тип входящего запроса.</typeparam>
         /// <typeparam name="TResponseMessage">Тип ответа.</typeparam>
-        /// <param name="message">Сообщение ответа.</param>
         /// <param name="requestHandler">Функция для обработки запросов.</param>
-        public async Task RespondingToRequests<TRequestMessage, TResponseMessage>(
+        public async Task RespondingToRequestsAsync<TRequestMessage, TResponseMessage>(
             Func<TRequestMessage, TResponseMessage> requestHandler)
         {
-            await _bus.Rpc.RespondAsync<TRequestMessage, TResponseMessage>(request => requestHandler(request));
+            ArgumentNullException.ThrowIfNull(requestHandler);
+
+            await _bus.Rpc.RespondAsync(requestHandler);
         }
 
         /// <summary>
         /// Закрытие подключения к RabbitMQ.
         /// </summary>
-        public void Dispose() => _bus.Dispose(); 
+        public void Dispose() => _bus.Dispose();
     }
 }

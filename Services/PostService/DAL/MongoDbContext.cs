@@ -9,6 +9,7 @@ namespace PostService.DAL
 
         public MongoDbContext(string connectionString)
         {
+            if (string.IsNullOrEmpty(connectionString)) throw new ArgumentException("Connection string cannot be null or empty.", nameof(connectionString));
             var client = new MongoClient(connectionString);
             _database = client.GetDatabase("PostServiceDb");
         }

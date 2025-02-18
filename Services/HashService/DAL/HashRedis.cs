@@ -1,13 +1,13 @@
-﻿using HashService.BL.Services.Interfaces;
+﻿using HashService.Interfaces;
 using StackExchange.Redis;
 
 namespace HashService.DAL
 {
-    public class RedisHash
+    public class HashRedisService : IHashRedisService
     {
         private readonly IDatabase _redisDb;
 
-        public RedisHash(string connectionString)
+        public HashRedisService(string connectionString)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentException("Строка подключения не может быть пустой.", nameof(connectionString));
@@ -20,7 +20,7 @@ namespace HashService.DAL
         /// Сохраняет хэш в список Redis.
         /// </summary>
         /// <param name="hash">Хэш для сохранения.</param>
-        public void SaveHash(string hash)
+        public void Add(string hash)
         {
             if (string.IsNullOrWhiteSpace(hash))
                 throw new ArgumentException("Хэш не может быть пустым.", nameof(hash));
@@ -32,7 +32,7 @@ namespace HashService.DAL
         /// Получает хэш из Redis и удаляет его из списка.
         /// </summary>
         /// <returns>Хэш или null, если список пуст.</returns>
-        public string GetHash()
+        public string Get()
         {
             return _redisDb.ListRightPop("hashes");
         }
@@ -52,7 +52,7 @@ namespace HashService.DAL
 
             for (int i = 0; i < count; i++)
             {
-                SaveHash(generator.GenerateHash());
+                Add(generator.GenerateHash());
             }
         }
     }

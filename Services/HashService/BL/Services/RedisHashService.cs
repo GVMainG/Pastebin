@@ -1,6 +1,6 @@
-﻿using HashService.BL.Services.Interfaces;
-using HashService.DAL;
+﻿using HashService.DAL;
 using HashService.DAL.Models;
+using HashService.Interfaces;
 using Pastebin.Infrastructure.SDK.Models;
 using Pastebin.Infrastructure.SDK.Services;
 
@@ -8,11 +8,11 @@ namespace HashService.BL.Services
 {
     public class RedisHashService
     {
-        private readonly RedisHash _redisCache;
+        private readonly HashRedisService _redisCache;
         private readonly IHashGeneratorService _hashGenerator;
         private readonly RabbitMqService _rabbitMqService;
 
-        public RedisHashService(RedisHash redisCacheService, RabbitMqService rabbitMqService, IHashGeneratorService hashGenerator)
+        public RedisHashService(HashRedisService redisCacheService, RabbitMqService rabbitMqService, IHashGeneratorService hashGenerator)
         {
             _redisCache = redisCacheService ?? throw new ArgumentNullException(nameof(redisCacheService));
             _rabbitMqService = rabbitMqService ?? throw new ArgumentNullException(nameof(rabbitMqService));
@@ -30,7 +30,7 @@ namespace HashService.BL.Services
             }
             catch (Exception ex)
             {
-                // Логирование ошибки
+                // Логирование ошибки.
                 Console.WriteLine($"Error starting RedisHashService: {ex.Message}");
                 throw;
             }
@@ -44,7 +44,7 @@ namespace HashService.BL.Services
         private HashModel HandleHashRequest(GetHashsRequest message)
         {
             var hash = GetOrGenerateHash();
-            _redisCache.SaveHash(hash);
+            _redisCache.Add(hash);
 
             return new HashModel() { Hash = hash };
         }
@@ -55,7 +55,7 @@ namespace HashService.BL.Services
         /// <returns>Хэш в виде строки.</returns>
         private string GetOrGenerateHash()
         {
-            return _redisCache.GetHash() ?? _hashGenerator.GenerateHash();
+            return _redisCache.Get() ?? _hashGenerator.GenerateHash();
         }
     }
 }

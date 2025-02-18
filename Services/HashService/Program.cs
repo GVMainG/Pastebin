@@ -1,6 +1,6 @@
 using HashService.BL.Services;
-using HashService.BL.Services.Interfaces;
 using HashService.DAL;
+using HashService.Interfaces;
 using Pastebin.Infrastructure.SDK.Services;
 using HS = HashService.BL.Services.RedisHashService;
 
@@ -23,7 +23,7 @@ namespace HashService
 
         private static void ConfigureServices(WebApplicationBuilder builder)
         {
-            builder.Services.AddTransient(x => new RedisHash(builder.Configuration.GetConnectionString("redis")));
+            builder.Services.AddTransient(x => new HashRedisService(builder.Configuration.GetConnectionString("redis")));
             builder.Services.AddSingleton(new RabbitMqService(builder.Configuration.GetConnectionString("rabbitmq")));
             builder.Services.AddSingleton<IHashGeneratorService, HashGeneratorService>();
             builder.Services.AddSingleton<HS>();
@@ -33,7 +33,7 @@ namespace HashService
         {
             try
             {
-                var redisHash = app.Services.GetService<RedisHash>();
+                var redisHash = app.Services.GetService<HashRedisService>();
                 redisHash?.PreloadHashes(100, new HashGeneratorService());
 
                 var redisHashService = app.Services.GetService<HS>();

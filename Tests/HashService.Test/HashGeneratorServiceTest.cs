@@ -2,10 +2,10 @@
 
 namespace HashService.Test
 {
-    public class HashGeneratorServiceTest
+    public class HashGeneratorService_Test
     {
         [Fact]
-        public void GenerateHashTestNotNull()
+        public void GenerateHash_Test_NotNull()
         {
             // Arrange.
             var hashGeneratorService = new HashGeneratorService();
@@ -18,7 +18,7 @@ namespace HashService.Test
         }
 
         [Fact]
-        public void GenerateHashTestNotEmpty()
+        public void GenerateHash_Test_NotEmpty()
         {
             // Arrange.
             var hashGeneratorService = new HashGeneratorService();
@@ -31,7 +31,7 @@ namespace HashService.Test
         }
 
         [Fact]
-        public void GenerateHashTestLength()
+        public void GenerateHash_Test_Length()
         {
             // Arrange.
             var hashGeneratorService = new HashGeneratorService();
@@ -44,7 +44,7 @@ namespace HashService.Test
         }
 
         [Fact]
-        public void GenerateHashTestUniqueValue()
+        public void GenerateHash_Test_UniqueValue()
         {
             // Arrange.
             var hashGeneratorService = new HashGeneratorService();

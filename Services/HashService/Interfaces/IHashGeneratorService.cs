@@ -1,4 +1,4 @@
-﻿namespace HashService.BL.Services.Interfaces
+﻿namespace HashService.Interfaces
 {
     public interface IHashGeneratorService
     {

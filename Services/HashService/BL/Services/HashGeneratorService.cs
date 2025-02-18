@@ -1,4 +1,4 @@
-﻿using HashService.BL.Services.Interfaces;
+﻿using HashService.Interfaces;
 using System.Security.Cryptography;
 
 namespace HashService.BL.Services

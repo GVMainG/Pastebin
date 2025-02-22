@@ -88,5 +88,5 @@ volumes:
   mongo_data:
 
 networks:
-  app-network: 
-    driver: bridge
+  app-network:
+    external: true

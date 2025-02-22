@@ -1,4 +1,4 @@
-﻿using HashService.BL.Services.Interfaces;
+﻿using HashService.Interfaces;
 using System.Security.Cryptography;
 
 namespace HashService.BL.Services
@@ -6,7 +6,7 @@ namespace HashService.BL.Services
 
     public class HashGeneratorService : IHashGeneratorService
     {
-        private const int HashLength = 8;
+        public const int HashLength = 8;
 
         /// <summary>
         /// Генерирует случайный хеш.

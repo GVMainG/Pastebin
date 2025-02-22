@@ -61,7 +61,7 @@ namespace PostService.BL.Services
             var text = await _mongoRepository.GetPostAsync(hash);
             var metadata = await _postgresRepository.GetMetadataAsync(hash);
             return text != null && metadata != null
-                ? new PostResponse { Hash = hash, Text = text, CreatedAt = metadata.CreatedAt }
+                ? new PostResponse { Hash = hash, Text = text }
                 : null;
         }
     }

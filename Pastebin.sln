@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostService", "Services\Pos
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FCBB961F-A5C2-4F75-8BCA-2B05954CD2F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashService.Test", "Tests\HashService.Test\HashService.Test.csproj", "{2996E432-73AC-41D2-BA4E-ACD5F4BE51FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{FCBB961F-A5C2-4F75-8BCA-2B05954CD2F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCBB961F-A5C2-4F75-8BCA-2B05954CD2F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCBB961F-A5C2-4F75-8BCA-2B05954CD2F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2996E432-73AC-41D2-BA4E-ACD5F4BE51FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2996E432-73AC-41D2-BA4E-ACD5F4BE51FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2996E432-73AC-41D2-BA4E-ACD5F4BE51FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2996E432-73AC-41D2-BA4E-ACD5F4BE51FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,5 +60,6 @@ Global
 		{BEAA0673-BE2D-4853-A6E9-9624018A767F} = {F19616DC-B90C-413C-9408-187DC1187603}
 		{4A5D546F-1472-413E-B404-3AC008D8F263} = {C7AEE561-E524-47BB-8247-90C0E14E66BF}
 		{CC3D43F8-B8C5-4D96-8F1A-A029A7C628D5} = {13D5CB88-7A6F-49BA-BA7B-4581B5279618}
+		{2996E432-73AC-41D2-BA4E-ACD5F4BE51FF} = {C7AEE561-E524-47BB-8247-90C0E14E66BF}
 	EndGlobalSection
 EndGlobal

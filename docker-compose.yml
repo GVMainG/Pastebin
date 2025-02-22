@@ -8,10 +8,10 @@ services:
     depends_on:
       - redis
       - rabbitmq
-    ports:
-      - "8082:8082"
+    # ports:
+    #   - "8082:8082"
     environment:
-      ASPNETCORE_URLS: "http://0.0.0.0:8082"
+      # ASPNETCORE_URLS: "http://0.0.0.0:8082"
       ConnectionStrings__rabbitmq: "host=rabbitmq:5672;username=guest;password=guest;publisherConfirms=true"
       ConnectionStrings__redis: "redis:6379"
     restart: always
@@ -24,17 +24,17 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    ports:
-      - "5672:5672" # RabbitMQ Protocol
-      - "15672:15672" # UI
+    # ports:
+    #   - "5672:5672" # RabbitMQ Protocol
+    #   - "15672:15672" # UI
     networks:
       - app-network
 
   redis:
     image: redis:7
     container_name: redis
-    ports:
-      - "6379:6379"
+    # ports:
+    #   - "6379:6379"
     networks:
       - app-network
 
@@ -46,13 +46,13 @@ services:
     container_name: postservice
     depends_on:
       - rabbitmq
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     environment:
       ConnectionStrings__postgres: "Host=postgres;Port=5432;Database=postservice_db;Username=postgres;Password=postgres"
       ConnectionStrings__mongodb: "mongodb://mongo:27017"
       ConnectionStrings__rabbitmq: "host=rabbitmq:5672;username=guest;password=guest;publisherConfirms=true"
-      ASPNETCORE_URLS: "http://0.0.0.0:8080"
+      # ASPNETCORE_URLS: "http://0.0.0.0:8080"
     restart: always
     networks:
       - app-network
@@ -65,8 +65,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postservice_db
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -76,12 +76,22 @@ services:
     image: mongo:6
     container_name: mongo
     restart: always
-    ports:
-      - "27017:27017"
+    # ports:
+    #   - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
     - app-network
+
+  apigateway:
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: Services/APIGateway/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+        ASPNETCORE_URLS: "http://0.0.0.0:8080"
 
 volumes:
   postgres_data:

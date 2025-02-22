@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "hashservice": "StartDebugging",
-        "postservice": "StartDebugging"
+        "postservice": "StartDebugging",
+        "apigateway": "StartDebugging"
       }
     }
   }

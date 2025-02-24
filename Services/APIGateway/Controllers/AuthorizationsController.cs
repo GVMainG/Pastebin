@@ -1,21 +1,34 @@
 ﻿using APIGateway.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Pastebin.Infrastructure.SDK.Models;
 
 namespace APIGateway.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[AllowAnonymous]
 public class AuthorizationsController : ControllerBase
 {
-    [HttpGet("auth/register")]
-    public OkObjectResult Registration([FromBody] RegistrationRequest request)
+    [HttpPost("auth/register")]
+    public OkResult Registration([FromBody] RegistrationRequest request)
     {
-        return Ok(Guid.NewGuid());
+        return Ok();
     }
 
-    [HttpGet("auth/login ")]
-    public OkObjectResult Login([FromBody] RegistrationRequest request)
+    [HttpPost("auth/login")]
+    public OkObjectResult Login([FromBody] LoginRequest request)
     {
-        return Ok(true);
+        var user = new UserModel()
+        {
+            Id = Guid.NewGuid(),
+            Login = request.Login,
+            Email = string.Empty,
+            RoleId = Guid.NewGuid()
+        };
+
+        
+
+        return Ok(user);
     }
 }

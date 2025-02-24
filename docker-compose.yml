@@ -22,11 +22,11 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    # ports:
-    #   - "5672:5672" # RabbitMQ Protocol
-    #   - "15672:15672" # UI
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    ports:
+      - "5672:5672" # RabbitMQ Protocol
+      - "15672:15672" # UI
     networks:
       - app-network
 
@@ -92,6 +92,7 @@ services:
       - "8080:8080"
     environment:
         ASPNETCORE_URLS: "http://0.0.0.0:8080"
+        ConnectionStrings__rabbitmq: "host=rabbitmq:5672;username=${RABBITMQ_USER};password=${RABBITMQ_PASS};publisherConfirms=true"
 
 volumes:
   postgres_data:

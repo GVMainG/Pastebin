@@ -23,6 +23,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashService.Test", "Tests\H
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway", "Services\APIGateway\APIGateway.csproj", "{ED506F14-9724-4DFA-AB9B-E3D4111E7B3F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{F10DE1EA-FBBB-4321-A09B-867F8601BB15}"
+	ProjectSection(SolutionItems) = preProject
+		SecretValues.env = SecretValues.env
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

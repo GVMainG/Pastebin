@@ -38,12 +38,12 @@ namespace APIGateway.Services
             {
                 var result = await _rabbitMq.SendRequestToQueueAsync<LoginRequest, LoginResponse>(QUEUE_AUTH_REQUESTS,
                     request);
-
                 return result ?? new LoginResponse();
 
             }
             catch (Exception ex)
             {
+
                 return new LoginResponse();
             }
         }

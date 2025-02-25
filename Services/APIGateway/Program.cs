@@ -1,5 +1,6 @@
 using APIGateway.Services;
 using APIGateway.Tools;
+using Pastebin.Infrastructure.SDK.Services;
 
 namespace APIGateway
 {
@@ -12,6 +13,13 @@ namespace APIGateway
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            var rabbitMqConnectionString = builder.Configuration.GetConnectionString("rabbitmq");
+            if (string.IsNullOrEmpty(rabbitMqConnectionString))
+            {
+                throw new InvalidOperationException("RabbitMQ connection string is not configured.");
+            }
+            builder.Services.AddSingleton(new RabbitMqService(rabbitMqConnectionString));
 
             builder.Services.AddJWTAuthorization("Test");
 

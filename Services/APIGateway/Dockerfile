@@ -13,6 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/APIGateway/APIGateway.csproj", "Services/APIGateway/"]
+COPY ["Infrastructure/Pastebin.Infrastructure.SDK/Pastebin.Infrastructure.SDK.csproj", "Infrastructure/Pastebin.Infrastructure.SDK/"]
 RUN dotnet restore "./Services/APIGateway/APIGateway.csproj"
 COPY . .
 WORKDIR "/src/Services/APIGateway"

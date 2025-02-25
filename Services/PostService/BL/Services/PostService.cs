@@ -35,7 +35,7 @@ namespace PostService.BL.Services
 
             var requestModel = new GetHashsRequest() { Count = 1 };
 
-            var hash = await _rabbitMqService.AsynchronousRequestAsync<GetHashsRequest, HashModel>(requestModel);
+            var hash = await _rabbitMqService.SendRequestAsync<GetHashsRequest, HashModel>(requestModel);
             await _mongoRepository.SavePostAsync(new PostTextModel() 
             { 
                 Hash = hash.Hash, 

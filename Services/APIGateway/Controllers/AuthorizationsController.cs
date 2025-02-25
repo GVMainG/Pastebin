@@ -8,7 +8,7 @@ namespace APIGateway.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-[AllowAnonymous]
+//[AllowAnonymous]
 public class AuthorizationsController : ControllerBase
 {
     private readonly UserServices _userServices;
@@ -24,7 +24,7 @@ public class AuthorizationsController : ControllerBase
     {
         var result = await _userServices.Registration(request);
 
-        if (result == null || result.IsRegistered)
+        if (result == null || !result.IsRegistered)
         {
             return BadRequest();
         }

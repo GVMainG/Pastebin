@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pastebin.Infrastructure.SDK.Models
+﻿namespace Pastebin.Infrastructure.SDK.Models
 {
     public class LoginResponse
     {
+        public string JWTToken { get; set; } = string.Empty;
     }
 }

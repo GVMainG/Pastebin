@@ -6,7 +6,7 @@ namespace APIGateway.Services
 {
     public class UserServices
     {
-        private const string QUEUE_NAME = "authorization_and_registration";
+        private const string QUEUE_AUTH_REQUESTS = "auth.requests";
 
         private readonly RabbitMqService _rabbitMq;
 
@@ -17,25 +17,35 @@ namespace APIGateway.Services
 
         private UserServices() { }
 
-        public async Task<Guid> Registration(RegistrationRequest request)
+        public async Task<RegistrationResponse> Registration(RegistrationRequest request)
         {
             try
             {
-                var result = await _rabbitMq.SendRequestToQueueAsync<RegistrationRequest, RegistrationResponse>(QUEUE_NAME,
+                var result = await _rabbitMq.SendRequestToQueueAsync<RegistrationRequest, RegistrationResponse>(QUEUE_AUTH_REQUESTS,
                     request);
 
-                return result is not null && result.Id != Guid.Empty ?
-                    result.Id : Guid.Empty;
+                return result ?? new RegistrationResponse();
             }
             catch (Exception ex)
             {
-                return Guid.Empty;
+                return new RegistrationResponse();
             }
         }
 
-        public async Task<string> Login(LoginRequest request)
+        public async Task<LoginResponse> Login(LoginRequest request)
         {
-            return string.Empty;
+            try
+            {
+                var result = await _rabbitMq.SendRequestToQueueAsync<LoginRequest, LoginResponse>(QUEUE_AUTH_REQUESTS,
+                    request);
+
+                return result ?? new LoginResponse();
+
+            }
+            catch (Exception ex)
+            {
+                return new LoginResponse();
+            }
         }
     }
 }

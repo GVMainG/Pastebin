@@ -1,3 +1,6 @@
+using APIGateway.Services;
+using APIGateway.Tools;
+
 namespace APIGateway
 {
     public class Program
@@ -10,14 +13,21 @@ namespace APIGateway
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddJWTAuthorization("Test");
+
+            builder.Services.AddTransient<UserServices>();
+
             var app = builder.Build();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
             app.MapControllers();
 
             app.Run();

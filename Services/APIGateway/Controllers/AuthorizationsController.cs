@@ -1,34 +1,51 @@
 ﻿using APIGateway.Models;
+using APIGateway.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pastebin.Infrastructure.SDK.Models;
 
 namespace APIGateway.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/auth")]
 [ApiController]
 [AllowAnonymous]
 public class AuthorizationsController : ControllerBase
 {
-    [HttpPost("auth/register")]
-    public OkResult Registration([FromBody] RegistrationRequest request)
+    private readonly UserServices _userServices;
+
+    public AuthorizationsController(UserServices userServices)
     {
-        return Ok();
+        _userServices = userServices;
     }
 
-    [HttpPost("auth/login")]
-    public OkObjectResult Login([FromBody] LoginRequest request)
+
+    [HttpPost("register")]
+    public async Task<ActionResult> Registration([FromBody] RegistrationRequest request)
     {
-        var user = new UserModel()
+        var result = await _userServices.Registration(request);
+
+        if (result == null || result.IsRegistered)
         {
-            Id = Guid.NewGuid(),
-            Login = request.Login,
-            Email = string.Empty,
-            RoleId = Guid.NewGuid()
-        };
+            return BadRequest();
+        }
+        else
+        {
+            return Created();
+        }
+    }
 
-        
+    [HttpPost("login")]
+    public async Task<ActionResult> Login([FromBody] LoginRequest request)
+    {
+        var result = await _userServices.Login(request);
 
-        return Ok(user);
+        if (result == null || string.IsNullOrEmpty(result.JWTToken))
+        {
+            return Unauthorized();
+        }
+        else
+        {
+            return Accepted(result);
+        }
     }
 }

@@ -2,5 +2,5 @@
 
 public class RegistrationResponse
 {
-    public Guid Id { get; set; }
+    public bool IsRegistered { get; set; } = false;
 }

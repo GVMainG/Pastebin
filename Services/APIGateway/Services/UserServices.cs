@@ -7,7 +7,7 @@ namespace APIGateway.Services
     public class UserServices
     {
         private const string QUEUE_AUTH = "auth";
-        private const string SQUEUE_USERS_CREATE_DEL = "users.create_del";
+        private const string QUEUE_USERS_CREATE_DEL = "users.create_del";
 
         private readonly RabbitMqService _rabbitMq;
 
@@ -51,14 +51,14 @@ namespace APIGateway.Services
 
         public async Task UserEditRequest(UserEditRequest request)
         {
-            await _rabbitMq.PublishToQueueAsync<UserEditRequest>(SQUEUE_USERS_CREATE_DEL, request);
+            await _rabbitMq.PublishToQueueAsync<UserEditRequest>(QUEUE_USERS_CREATE_DEL, request);
         }
 
         public async Task UserDeleteRequest(Guid id)
         {
             try
             {
-                await _rabbitMq.PublishToQueueAsync<UserDeleteRequest>(SQUEUE_USERS_CREATE_DEL, new UserDeleteRequest(id));
+                await _rabbitMq.PublishToQueueAsync<UserDeleteRequest>(QUEUE_USERS_CREATE_DEL, new UserDeleteRequest(id));
             }
             catch (Exception ex)
             {

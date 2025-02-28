@@ -140,6 +140,15 @@ namespace Pastebin.Infrastructure.SDK.Services
             return response;
         }
 
+        public async Task<TResponse> SendRequestAsync<TRequest, TResponse>(TRequest request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var response = await _bus.Rpc.RequestAsync<TRequest, TResponse>(request);
+            return response;
+        }
+
         /// <summary>
         /// Отправляет асинхронный запрос в указанную очередь и обрабатывает ответ.
         /// </summary>

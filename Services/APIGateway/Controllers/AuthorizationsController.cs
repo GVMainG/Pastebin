@@ -8,7 +8,6 @@ namespace APIGateway.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-//[AllowAnonymous]
 public class AuthorizationsController : ControllerBase
 {
     private readonly UserServices _userServices;
@@ -20,7 +19,7 @@ public class AuthorizationsController : ControllerBase
 
 
     [HttpPost("register")]
-    public async Task<ActionResult> Registration([FromBody] RegistrationRequest request)
+    public async Task<IActionResult> Registration([FromBody] RegistrationRequest request)
     {
         var result = await _userServices.Registration(request);
 
@@ -35,7 +34,7 @@ public class AuthorizationsController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var result = await _userServices.Login(request);
 
@@ -50,7 +49,8 @@ public class AuthorizationsController : ControllerBase
     }
 
     [HttpPut("edit")]
-    public async Task<ActionResult> UserEditRequest([FromBody] UserEditRequest request)
+    [Authorize]
+    public async Task<IActionResult> UserEditRequest([FromBody] UserEditRequest request)
     {
         try
         {
@@ -64,7 +64,8 @@ public class AuthorizationsController : ControllerBase
     }
 
     [HttpDelete("delete/{id}")]
-    public async Task<ActionResult> UserDeleteRequest(Guid id)
+    [Authorize]
+    public async Task<IActionResult> UserDeleteRequest(Guid id)
     {
         try
         {

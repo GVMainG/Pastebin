@@ -48,4 +48,32 @@ public class AuthorizationsController : ControllerBase
             return Accepted(result);
         }
     }
+
+    [HttpPut("edit")]
+    public async Task<ActionResult> UserEditRequest([FromBody] UserEditRequest request)
+    {
+        try
+        {
+            await _userServices.UserEditRequest(request);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete("delete/{id}")]
+    public async Task<ActionResult> UserDeleteRequest(Guid id)
+    {
+        try
+        {
+            await _userServices.UserDeleteRequest(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest();
+        }
+    }
 }

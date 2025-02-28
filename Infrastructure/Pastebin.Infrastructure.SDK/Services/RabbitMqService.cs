@@ -53,6 +53,7 @@ namespace Pastebin.Infrastructure.SDK.Services
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
 
+            await _bus.Advanced.QueueDeclareAsync(queueName);
             await _bus.SendReceive.SendAsync(queueName, message);
         }
 
@@ -104,6 +105,7 @@ namespace Pastebin.Infrastructure.SDK.Services
             if (messageHandler == null)
                 throw new ArgumentNullException(nameof(messageHandler));
 
+            await _bus.Advanced.QueueDeclareAsync(queueName);
             await _bus.SendReceive.ReceiveAsync<TMessage>(queueName, async message =>
             {
                 try
@@ -157,6 +159,7 @@ namespace Pastebin.Infrastructure.SDK.Services
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
+            await _bus.Advanced.QueueDeclareAsync(queueName);
             var response = await _bus.Rpc.RequestAsync<TRequest, TResponse>(request, config => config.WithQueueName(queueName));
             responseHandler?.Invoke(response);
 
@@ -195,6 +198,7 @@ namespace Pastebin.Infrastructure.SDK.Services
 
             ArgumentNullException.ThrowIfNull(requestHandler);
 
+            await _bus.Advanced.QueueDeclareAsync(queueName);
             await _bus.Rpc.RespondAsync(requestHandler, config => config.WithQueueName(queueName));
         }
 

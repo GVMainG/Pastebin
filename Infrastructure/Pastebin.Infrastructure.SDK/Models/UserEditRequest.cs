@@ -1,10 +1,9 @@
-﻿namespace APIGateway.Models
+﻿namespace Pastebin.Infrastructure.SDK.Models
 {
-    public class UserModel
+    public class UserEditRequest
     {
         public Guid Id { get; set; }
         public string Login { get; set; }
         public string Email { get; set; }
-        public Guid RoleId { get; set; }
     }
 }

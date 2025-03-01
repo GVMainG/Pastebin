@@ -9,10 +9,17 @@ namespace APIGateway.Services
         private const string QUEUE_AUTH = "auth";
         private const string QUEUE_USERS_CREATE_DEL = "users.create_del";
 
+        private readonly ILogger<UserServices> _logger;
         private readonly RabbitMqService _rabbitMq;
 
-        public UserServices(RabbitMqService rabbitMq)
+        public UserServices(RabbitMqService rabbitMq, ILogger<UserServices> logger)
         {
+            if (rabbitMq == null)
+                throw new ArgumentNullException(nameof(rabbitMq));
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
+            _logger = logger;
             _rabbitMq = rabbitMq;
         }
 
@@ -22,13 +29,17 @@ namespace APIGateway.Services
         {
             try
             {
-                var result = await _rabbitMq.SendRequestToQueueAsync<RegistrationRequest, RegistrationResponse>(QUEUE_AUTH,
-                    request);
+                _logger.LogDebug($"{Registration}:" + "{@request}", request);
 
-                return result ?? new RegistrationResponse();
+                var result = (await _rabbitMq.SendRequestToQueueAsync<RegistrationRequest, RegistrationResponse>(QUEUE_AUTH,
+                    request)) ?? new RegistrationResponse();
+
+                _logger.LogDebug($"{Registration}:" + "{@result}", result);
+                return result;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"{Registration}:" + "{@request}", request);
                 return new RegistrationResponse();
             }
         }
@@ -37,32 +48,45 @@ namespace APIGateway.Services
         {
             try
             {
-                var result = await _rabbitMq.SendRequestToQueueAsync<LoginRequest, LoginResponse>(QUEUE_AUTH,
-                    request);
-                return result ?? new LoginResponse();
+                _logger.LogDebug($"{Login}:" + "{@request}", request);
 
+                var result = (await _rabbitMq.SendRequestToQueueAsync<LoginRequest, LoginResponse>(QUEUE_AUTH,
+                    request)) ?? new LoginResponse();
+
+                _logger.LogDebug($"{Login}:" + "{@result}", result);
+                return result;
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, $"{Login}:" + "{@request}", request);
                 return new LoginResponse();
             }
         }
 
         public async Task UserEditRequest(UserEditRequest request)
         {
-            await _rabbitMq.PublishToQueueAsync<UserEditRequest>(QUEUE_USERS_CREATE_DEL, request);
+            try
+            {
+                _logger.LogDebug($"{UserEditRequest}:" + "{@request}", request);
+
+                await _rabbitMq.PublishToQueueAsync(QUEUE_USERS_CREATE_DEL, request);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{UserEditRequest}:" + "{@request}", request);
+            }
         }
 
         public async Task UserDeleteRequest(Guid id)
         {
             try
             {
-                await _rabbitMq.PublishToQueueAsync<UserDeleteRequest>(QUEUE_USERS_CREATE_DEL, new UserDeleteRequest(id));
+                _logger.LogDebug($"{UserDeleteRequest}:" + "{@id}", id);
+                await _rabbitMq.PublishToQueueAsync(QUEUE_USERS_CREATE_DEL, new UserDeleteRequest(id));
             }
             catch (Exception ex)
             {
-                // TODO: log.
+                _logger.LogError(ex, $"{UserDeleteRequest}:" + "{@id}", id);
             }
         }
     }

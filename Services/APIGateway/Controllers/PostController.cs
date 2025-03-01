@@ -11,17 +11,20 @@ namespace APIGateway.Controllers
     public class PostController : ControllerBase
     {
         private PostsService _postsService;
+        private ILogger<PostController> _logger;
 
-        public PostController(PostsService postsService)
+        public PostController(PostsService postsService, ILogger<PostController> logger)
         {
             _postsService = postsService;
+            _logger = logger;
         }
 
         [HttpGet("{hash}")]
         public async Task<IActionResult> Get(string hash)
         {
-            var result = await _postsService.Get(hash);
+            _logger.LogDebug($"{nameof(Get)}:" + "{@hash}", hash);
 
+            var result = await _postsService.Get(hash);
             if (result == null || string.IsNullOrEmpty(result.Content))
             {
                 return NotFound();
@@ -35,6 +38,8 @@ namespace APIGateway.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrUpdate([FromBody] CreateOrUpdatePostRequest request)
         {
+            _logger.LogDebug($"{nameof(CreateOrUpdate)}:" + "{@request}", request);
+
             var result = await _postsService.CreateOrUpdate(request);
             return result ? Ok() : BadRequest();
         }
@@ -42,6 +47,8 @@ namespace APIGateway.Controllers
         [HttpDelete("del/{hash}")]
         public async Task<IActionResult> Delete(string hash)
         {
+            _logger.LogDebug($"{nameof(Delete)}:" + "{@hash}", hash);
+
             var result = await _postsService.Delete(hash);
             return result ? Ok() : BadRequest();
         }

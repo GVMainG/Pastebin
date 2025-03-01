@@ -11,18 +11,26 @@ namespace APIGateway.Controllers;
 public class AuthorizationsController : ControllerBase
 {
     private readonly UserServices _userServices;
+    private readonly ILogger<AuthorizationsController> _logger;
 
-    public AuthorizationsController(UserServices userServices)
+    public AuthorizationsController(UserServices userServices, ILogger<AuthorizationsController> logger)
     {
+        if (userServices == null)
+            throw new ArgumentNullException(nameof(userServices));
+        if (logger == null)
+            throw new ArgumentNullException(nameof(logger));
+
         _userServices = userServices;
+        _logger = logger;
     }
 
 
     [HttpPost("register")]
     public async Task<IActionResult> Registration([FromBody] RegistrationRequest request)
     {
-        var result = await _userServices.Registration(request);
+        _logger.LogDebug($"{nameof(Registration)}:" + "{@request}", request);
 
+        var result = await _userServices.Registration(request);
         if (result == null || !result.IsRegistered)
         {
             return BadRequest();
@@ -36,8 +44,9 @@ public class AuthorizationsController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var result = await _userServices.Login(request);
+        _logger.LogDebug($"{nameof(Login)}:" + "{@request}", request);
 
+        var result = await _userServices.Login(request);
         if (result == null || string.IsNullOrEmpty(result.JWTToken))
         {
             return Unauthorized();
@@ -52,6 +61,8 @@ public class AuthorizationsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UserEditRequest([FromBody] UserEditRequest request)
     {
+        _logger.LogDebug($"{nameof(UserEditRequest)}:" + "{@request}", request);
+
         try
         {
             await _userServices.UserEditRequest(request);
@@ -67,6 +78,8 @@ public class AuthorizationsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UserDeleteRequest(Guid id)
     {
+        _logger.LogDebug($"{nameof(UserDeleteRequest)}:" + "{@id}", id);
+
         try
         {
             await _userServices.UserDeleteRequest(id);

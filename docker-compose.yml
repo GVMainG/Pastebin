@@ -11,8 +11,6 @@ services:
         RABBITMQ_PASS: ${RABBITMQ_PASS}
         ASPNETCORE_URLS: "http://0.0.0.0:8080"
         ConnectionStrings__rabbitmq: "host=rabbitmq:5672;username=${RABBITMQ_USER};password=${RABBITMQ_PASS};publisherConfirms=true"
-    # networks:
-    #   - overlay-network
     depends_on:
       - rabbitmq
     env_file:
@@ -25,41 +23,60 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     ports:
-      - "5672:5672"  # RabbitMQ Protocol
-      - "15672:15672"  # UI
-    # networks:
-    #   - overlay-network
+      - "5672:5672"  # RabbitMQ Protocol.
+      - "15672:15672"  # UI.
     env_file:
       - .env
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     environment:
       - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
       - "9200:9200"
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.3
+    image: docker.elastic.co/kibana/kibana:7.10.1
     ports:
       - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.17.3
-    volumes:
-      - ./logstash:/usr/share/logstash/pipeline/
     depends_on:
       - elasticsearch
+  
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "5044:5044"
-# networks:
-#   overlay-network:
-#     driver: overlay
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  node-exporter:
+    image: prom/node-exporter
+    ports:
+      - "9100:9100"
+
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter
+    container_name: rabbitmq-exporter
+    environment:
+      - RABBITMQ_URL=http://rabbitmq:15672
+      - RABBITMQ_USER= ${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD= ${RABBITMQ_PASS}
+    ports:
+      - "15692:15692"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - .env
+
+  redis-exporter:
+    image: oliver006/redis_exporter
+    ports:
+      - "9121:9121"

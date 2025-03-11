@@ -14,9 +14,9 @@ namespace APIGateway.Services
 
         public PostsService(RabbitMqService rabbitMq, ILogger<PostsService> logger)
         {
-            if(rabbitMq == null)
+            if (rabbitMq == null)
                 throw new ArgumentNullException(nameof(rabbitMq));
-            if(logger == null)
+            if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
 
             _rabbitMq = rabbitMq;
@@ -47,33 +47,14 @@ namespace APIGateway.Services
 
         public async Task<bool> CreateOrUpdate(CreateOrUpdatePostRequest request)
         {
-            try
-            {
-                _logger.LogDebug($"{CreateOrUpdate}:" + "{@request}", request);
-
-                await _rabbitMq.PublishToQueueAsync(QUEUE_POSTS_CREATE_UPDATE, request);
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+            await _rabbitMq.PublishToQueueAsync(QUEUE_POSTS_CREATE_UPDATE, request);
+            return true;
         }
 
         public async Task<bool> Delete(string hash)
         {
-            try
-            {
-                _logger.LogDebug($"{Delete}:" + "{@hash}", hash);
-
-                await _rabbitMq.PublishToQueueAsync(QUEUE_POSTS_DELETE, new DeletePostRequest(hash));
-                return true;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"{Delete}:" + "{@hash}", hash);
-                return false;
-            }
+            await _rabbitMq.PublishToQueueAsync(QUEUE_POSTS_DELETE, new DeletePostRequest(hash));
+            return true;
         }
     }
 }

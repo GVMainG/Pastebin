@@ -28,8 +28,6 @@ public class AuthorizationsController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Registration([FromBody] RegistrationRequest request)
     {
-        _logger.LogDebug($"{nameof(Registration)}:" + "{@request}", request);
-
         var result = await _userServices.Registration(request);
         if (result == null || !result.IsRegistered)
         {
@@ -44,8 +42,6 @@ public class AuthorizationsController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        _logger.LogDebug($"{nameof(Login)}:" + "{@request}", request);
-
         var result = await _userServices.Login(request);
         if (result == null || string.IsNullOrEmpty(result.JWTToken))
         {
@@ -61,8 +57,6 @@ public class AuthorizationsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UserEditRequest([FromBody] UserEditRequest request)
     {
-        _logger.LogDebug($"{nameof(UserEditRequest)}:" + "{@request}", request);
-
         try
         {
             await _userServices.UserEditRequest(request);
@@ -78,8 +72,6 @@ public class AuthorizationsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> UserDeleteRequest(Guid id)
     {
-        _logger.LogDebug($"{nameof(UserDeleteRequest)}:" + "{@id}", id);
-
         try
         {
             await _userServices.UserDeleteRequest(id);

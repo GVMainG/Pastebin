@@ -5,25 +5,26 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080;
 
 # Этот этап используется для сборки проекта службы
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Services/PostService/PostService.csproj", "Services/PostService/"]
+COPY ["Services/APIGateway/APIGateway.csproj", "Services/APIGateway/"]
 COPY ["Infrastructure/Pastebin.Infrastructure.SDK/Pastebin.Infrastructure.SDK.csproj", "Infrastructure/Pastebin.Infrastructure.SDK/"]
-RUN dotnet restore "./Services/PostService/PostService.csproj"
+RUN dotnet restore "./Services/APIGateway/APIGateway.csproj"
 COPY . .
-WORKDIR "/src/Services/PostService"
-RUN dotnet build "./PostService.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Services/APIGateway"
+RUN dotnet build "./APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Этот этап используется для публикации проекта службы, который будет скопирован на последний этап
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./PostService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PostService.dll"]
+ENTRYPOINT ["dotnet", "APIGateway.dll"]

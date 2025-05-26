@@ -26,7 +26,7 @@ namespace HashService.BL.Services
         {
             try
             {
-                await _rabbitMqService.RespondingToRequestsAsync<GetHashsRequest, HashModel>(HandleHashRequest);
+                //await _rabbitMqService.RespondingToRequestsAsync<GetHashsRequest, HashModel>(HandleHashRequest);
             }
             catch (Exception ex)
             {

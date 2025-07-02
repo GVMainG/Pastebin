@@ -113,7 +113,7 @@ namespace APIGateway
         }
 
         /// <summary>
-        /// Инициализация сервисов
+        /// Инициализация сервисов.
         /// </summary>
         /// <param name="services">Коллекция сервисов</param>
         /// <param name="conf">Конфигурация приложения</param>
@@ -129,9 +129,13 @@ namespace APIGateway
                 throw new InvalidOperationException("RabbitMQ connection string is not configured.");
             services.AddSingleton(new RabbitMqService(rabbitMqConnectionString));
 
+            var authServiceUrl = conf.GetConnectionString("authservice");
+            if (string.IsNullOrEmpty(authServiceUrl))
+                throw new InvalidOperationException("Auth service url is not configured.");
+            services.AddHttpClient<UserServices>(c => c.BaseAddress = new Uri(authServiceUrl));
+
             // Конфигурация JWT авторизации
             services.AddJWTAuthorization("Test");
-            services.AddTransient<UserServices>();
             services.AddTransient<PostsService>();
         }
     }

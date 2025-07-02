@@ -6,49 +6,62 @@ namespace APIGateway.Services
 {
     public class UserServices
     {
-        private const string QUEUE_AUTH = "auth";
-        private const string QUEUE_USERS_CREATE_DEL = "users.create_del";
-
         private readonly ILogger<UserServices> _logger;
         private readonly RabbitMqService _rabbitMq;
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
 
-        public UserServices(RabbitMqService rabbitMq, ILogger<UserServices> logger)
+        private IConfigurationSection _userServiceMethods;
+        private string queueUsersEditDel;
+
+        public UserServices(HttpClient httpClient, RabbitMqService rabbitMq, IConfiguration conf, ILogger<UserServices> logger)
         {
-            if (rabbitMq == null)
-                throw new ArgumentNullException(nameof(rabbitMq));
-            if (logger == null)
-                throw new ArgumentNullException(nameof(logger));
+            _configuration = conf ?? throw new ArgumentNullException(nameof(conf));
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _rabbitMq = rabbitMq ?? throw new ArgumentNullException(nameof(rabbitMq));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            _logger = logger;
-            _rabbitMq = rabbitMq;
+            _userServiceMethods = _configuration
+                .GetSection("Services")
+                .GetSection("APIMethods")
+                .GetSection("UserService");
+
+            queueUsersEditDel = _configuration
+                .GetSection("Services")
+                .GetSection("Queues")
+                .GetSection("QUEUE_USERS_EDIT_DEL")["name"] ?? string.Empty;
         }
 
         private UserServices() { }
 
         public async Task<RegistrationResponse> Registration(RegistrationRequest request)
         {
+            var response = await _httpClient.PostAsJsonAsync(_userServiceMethods["Registration"], request);
 
-            var result = (await _rabbitMq.SendRequestToQueueAsync<RegistrationRequest, RegistrationResponse>(QUEUE_AUTH,
-                request)) ?? new RegistrationResponse();
-            return result;
+            if (!response.IsSuccessStatusCode)
+                return new RegistrationResponse();
+
+            return await response.Content.ReadFromJsonAsync<RegistrationResponse>() ?? new RegistrationResponse();
         }
 
         public async Task<LoginResponse> Login(LoginRequest request)
         {
+            var response = await _httpClient.PostAsJsonAsync(_userServiceMethods["Login"], request);
 
-            var result = (await _rabbitMq.SendRequestToQueueAsync<LoginRequest, LoginResponse>(QUEUE_AUTH,
-                request)) ?? new LoginResponse();
-            return result;
+            if (!response.IsSuccessStatusCode)
+                return new LoginResponse();
+
+            return await response.Content.ReadFromJsonAsync<LoginResponse>() ?? new LoginResponse();
         }
 
         public async Task UserEditRequest(UserEditRequest request)
         {
-            await _rabbitMq.PublishToQueueAsync(QUEUE_USERS_CREATE_DEL, request);
+            await _rabbitMq.PublishToQueueAsync(queueUsersEditDel, request);
         }
 
         public async Task UserDeleteRequest(Guid id)
         {
-            await _rabbitMq.PublishToQueueAsync(QUEUE_USERS_CREATE_DEL, new UserDeleteRequest(id));
+            await _rabbitMq.PublishToQueueAsync(queueUsersEditDel, new UserDeleteRequest(id));
         }
     }
 }

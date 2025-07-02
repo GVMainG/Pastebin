@@ -1,6 +1,8 @@
-﻿using APIGateway.Models;
+using APIGateway.Models;
 using Pastebin.Infrastructure.SDK.Models;
 using Pastebin.Infrastructure.SDK.Services;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace APIGateway.Services
 {
@@ -11,9 +13,11 @@ namespace APIGateway.Services
 
         private readonly ILogger<UserServices> _logger;
         private readonly RabbitMqService _rabbitMq;
+        private readonly HttpClient _httpClient;
 
-        public UserServices(RabbitMqService rabbitMq, ILogger<UserServices> logger)
+        public UserServices(HttpClient httpClient, RabbitMqService rabbitMq, ILogger<UserServices> logger)
         {
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             if (rabbitMq == null)
                 throw new ArgumentNullException(nameof(rabbitMq));
             if (logger == null)
@@ -28,17 +32,21 @@ namespace APIGateway.Services
         public async Task<RegistrationResponse> Registration(RegistrationRequest request)
         {
 
-            var result = (await _rabbitMq.SendRequestToQueueAsync<RegistrationRequest, RegistrationResponse>(QUEUE_AUTH,
-                request)) ?? new RegistrationResponse();
-            return result;
+            var response = await _httpClient.PostAsJsonAsync("api/auth/register", request);
+            if (!response.IsSuccessStatusCode)
+                return new RegistrationResponse();
+
+            return await response.Content.ReadFromJsonAsync<RegistrationResponse>() ?? new RegistrationResponse();
         }
 
         public async Task<LoginResponse> Login(LoginRequest request)
         {
 
-            var result = (await _rabbitMq.SendRequestToQueueAsync<LoginRequest, LoginResponse>(QUEUE_AUTH,
-                request)) ?? new LoginResponse();
-            return result;
+            var response = await _httpClient.PostAsJsonAsync("api/auth/login", request);
+            if (!response.IsSuccessStatusCode)
+                return new LoginResponse();
+
+            return await response.Content.ReadFromJsonAsync<LoginResponse>() ?? new LoginResponse();
         }
 
         public async Task UserEditRequest(UserEditRequest request)

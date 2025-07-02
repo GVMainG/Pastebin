@@ -8,14 +8,14 @@ using Serilog.Context;
 namespace APIGateway
 {
     /// <summary>
-    /// Главный класс программы
+    /// ГѓГ«Г ГўГ­Г»Г© ГЄГ«Г Г±Г± ГЇГ°Г®ГЈГ°Г Г¬Г¬Г»
     /// </summary>
     public class Program
     {
         /// <summary>
-        /// Точка входа в приложение
+        /// Г’Г®Г·ГЄГ  ГўГµГ®Г¤Г  Гў ГЇГ°ГЁГ«Г®Г¦ГҐГ­ГЁГҐ
         /// </summary>
-        /// <param name="args">Аргументы командной строки</param>
+        /// <param name="args">ГЂГ°ГЈГіГ¬ГҐГ­ГІГ» ГЄГ®Г¬Г Г­Г¤Г­Г®Г© Г±ГІГ°Г®ГЄГЁ</param>
         public static void Main(string[] args)
         {
             var builder = InitializationWebApplicationBuilder(args);
@@ -25,31 +25,31 @@ namespace APIGateway
         }
 
         /// <summary>
-        /// Инициализация и конфигурация веб-приложения
+        /// Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЁ ГЄГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГї ГўГҐГЎ-ГЇГ°ГЁГ«Г®Г¦ГҐГ­ГЁГї
         /// </summary>
-        /// <param name="builder">Объект WebApplicationBuilder</param>
-        /// <returns>Сконфигурированное веб-приложение</returns>
+        /// <param name="builder">ГЋГЎГєГҐГЄГІ WebApplicationBuilder</param>
+        /// <returns>Г‘ГЄГ®Г­ГґГЁГЈГіГ°ГЁГ°Г®ГўГ Г­Г­Г®ГҐ ГўГҐГЎ-ГЇГ°ГЁГ«Г®Г¦ГҐГ­ГЁГҐ</returns>
         private static WebApplication InitializationWebApplication(WebApplicationBuilder builder)
         {
             var app = builder.Build();
 
-            // Включение логирования запросов Serilog.
+            // Г‚ГЄГ«ГѕГ·ГҐГ­ГЁГҐ Г«Г®ГЈГЁГ°Г®ГўГ Г­ГЁГї Г§Г ГЇГ°Г®Г±Г®Гў Serilog.
             app.UseSerilogRequestLogging();
 
-            // Конфигурация для режима разработки.
+            // ГЉГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГї Г¤Г«Гї Г°ГҐГ¦ГЁГ¬Г  Г°Г Г§Г°Г ГЎГ®ГІГЄГЁ.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            // Включение аутентификации и авторизации.
+            // Г‚ГЄГ«ГѕГ·ГҐГ­ГЁГҐ Г ГіГІГҐГ­ГІГЁГґГЁГЄГ Г¶ГЁГЁ ГЁ Г ГўГІГ®Г°ГЁГ§Г Г¶ГЁГЁ.
             app.UseAuthentication();
             app.UseAuthorization();
-            // Логирование HTTP-запросов.
+            // Г‹Г®ГЈГЁГ°Г®ГўГ Г­ГЁГҐ HTTP-Г§Г ГЇГ°Г®Г±Г®Гў.
             app.UseSerilogRequestLogging();
 
-            // Middleware для добавления TraceId в лог.
+            // Middleware Г¤Г«Гї Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГї TraceId Гў Г«Г®ГЈ.
             app.Use(async (context, next) =>
             {
                 var traceId = context.TraceIdentifier;
@@ -59,7 +59,7 @@ namespace APIGateway
                 }
             });
 
-            // Middleware для логирования запросов и ответов.
+            // Middleware Г¤Г«Гї Г«Г®ГЈГЁГ°Г®ГўГ Г­ГЁГї Г§Г ГЇГ°Г®Г±Г®Гў ГЁ Г®ГІГўГҐГІГ®Гў.
             //app.Use(async (context, next) =>
             //{
             //    var request = context.Request;
@@ -81,55 +81,58 @@ namespace APIGateway
             //});
 
             app.UseMetricServer();
-            // Считаем запросы, ошибки, время обработки.
+            // Г‘Г·ГЁГІГ ГҐГ¬ Г§Г ГЇГ°Г®Г±Г», Г®ГёГЁГЎГЄГЁ, ГўГ°ГҐГ¬Гї Г®ГЎГ°Г ГЎГ®ГІГЄГЁ.
             app.UseHttpMetrics();
 
-            // Маршрутизация контроллеров.
+            // ГЊГ Г°ГёГ°ГіГІГЁГ§Г Г¶ГЁГї ГЄГ®Г­ГІГ°Г®Г«Г«ГҐГ°Г®Гў.
             app.MapControllers();
 
             return app;
         }
 
         /// <summary>
-        /// Инициализация и конфигурация WebApplicationBuilder.
+        /// Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЁ ГЄГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГї WebApplicationBuilder.
         /// </summary>
-        /// <param name="args">Аргументы командной строки.</param>
-        /// <returns>Сконфигурированный WebApplicationBuilder.</returns>
+        /// <param name="args">ГЂГ°ГЈГіГ¬ГҐГ­ГІГ» ГЄГ®Г¬Г Г­Г¤Г­Г®Г© Г±ГІГ°Г®ГЄГЁ.</param>
+        /// <returns>Г‘ГЄГ®Г­ГґГЁГЈГіГ°ГЁГ°Г®ГўГ Г­Г­Г»Г© WebApplicationBuilder.</returns>
         private static WebApplicationBuilder InitializationWebApplicationBuilder(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Конфигурация Serilog.
+            // ГЉГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГї Serilog.
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Configuration)
                 .CreateLogger();
 
             builder.Host.UseSerilog();
 
-            // Инициализация сервисов
+            var authServiceUrl = conf.GetConnectionString("authservice");
+            if (string.IsNullOrEmpty(authServiceUrl))
+                throw new InvalidOperationException("Auth service url is not configured.");
+            services.AddHttpClient<UserServices>(c => c.BaseAddress = new Uri(authServiceUrl));
             InitializationServices(builder.Services, builder.Configuration);
 
             return builder;
         }
 
         /// <summary>
-        /// Инициализация сервисов
+        /// Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї Г±ГҐГ°ГўГЁГ±Г®Гў
         /// </summary>
-        /// <param name="services">Коллекция сервисов</param>
-        /// <param name="conf">Конфигурация приложения</param>
+        /// <param name="services">ГЉГ®Г«Г«ГҐГЄГ¶ГЁГї Г±ГҐГ°ГўГЁГ±Г®Гў</param>
+        /// <param name="conf">ГЉГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГї ГЇГ°ГЁГ«Г®Г¦ГҐГ­ГЁГї</param>
         private static void InitializationServices(IServiceCollection services, IConfiguration conf)
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
-            // Конфигурация RabbitMQ
+            // ГЉГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГї RabbitMQ
             var rabbitMqConnectionString = conf.GetConnectionString("rabbitmq");
             if (string.IsNullOrEmpty(rabbitMqConnectionString))
                 throw new InvalidOperationException("RabbitMQ connection string is not configured.");
             services.AddSingleton(new RabbitMqService(rabbitMqConnectionString));
 
-            // Конфигурация JWT авторизации
+            // ГЉГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГї JWT Г ГўГІГ®Г°ГЁГ§Г Г¶ГЁГЁ
             services.AddJWTAuthorization("Test");
             services.AddTransient<UserServices>();
             services.AddTransient<PostsService>();
